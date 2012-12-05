@@ -1,0 +1,21 @@
+{
+  "name": "Scribble",
+  "version": "0.0.0",
+  "author": "TerrordactylDesigns",
+  "description": "Last.fm scrobbler",
+  "contributors": [
+    {
+      "name": "Michael Belardo",
+      "email": "Mbelardo1@gmail.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "dependencies": {
+  },
+  "engines": {
+    "node": ">=0.8.x"
+  }
+}
