@@ -15,6 +15,12 @@
   },
   "dependencies": {
   },
+  "devDependencies": {
+    "tap": "*"
+  },
+  "scripts": {
+    "test": "tap test/index.js"
+  },
   "engines": {
     "node": ">=0.8.x"
   }
