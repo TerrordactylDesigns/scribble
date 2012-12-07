@@ -1,8 +1,18 @@
 {
-  "name": "Scribble",
-  "version": "0.0.0",
-  "author": "TerrordactylDesigns",
-  "description": "Last.fm scrobbler",
+  "name": "scribble",
+  "version": "0.0.1",
+  "description": "quick and sloppy Last.fm scrobbler",
+  "keywords": [
+    "lastfm",
+    "scrobble"
+  ],
+  "dependencies": {
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.8.x"
+  },
+  "author": "TerrordactylDesigns <Mbelardo1@gmail.com>",
   "contributors": [
     {
       "name": "Michael Belardo",
@@ -11,17 +21,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": ""
-  },
-  "dependencies": {
-  },
-  "devDependencies": {
-    "tap": "*"
-  },
-  "scripts": {
-    "test": "tap test/index.js"
-  },
-  "engines": {
-    "node": ">=0.8.x"
+    "url": "https://github.com/TerrordactylDesigns/scribble.git"
   }
 }
