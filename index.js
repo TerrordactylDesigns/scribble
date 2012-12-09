@@ -34,7 +34,6 @@ Scribble.prototype.postScrobble = function(song, sk) {
   var path = ''
     , now = new Date().getTime()
     , timestamp = Math.floor(now /1000)
-    , token       = makeHash(this.username + makeHash(this.password))
     , apiSig     = makeHash('api_key' + this.apiKey + 'artist' + song.artist + 'methodtrack.scrobblesk' + this.sessionKey + 'timestamp' + timestamp + 'track' + song.track + this.apiSecret)
     , post_data = querystring.stringify({
         method: 'track.scrobble',
@@ -69,6 +68,54 @@ Scribble.prototype.postScrobble = function(song, sk) {
   sendScrobble.write(post_data);
   sendScrobble.end();
 }
+/**/// Public: Post Now Playing
+/**///
+/**/// Args
+/**/// song - song object. artist, track keys
+/**/// sk   - authenticated session key
+/**///
+/**/// Returns
+/**/// return - xml response from scrobble
+Scribble.prototype.postNowPlaying = function(song, sk) {
+  if (sk && this.sessionKey == null) {
+    this.sessionKey = sk;
+  }
+  var path = ''
+    , now = new Date().getTime()
+    , timestamp = Math.floor(now /1000)
+    , apiSig     = makeHash('api_key' + this.apiKey + 'artist' + song.artist + 'methodtrack.updateNowPlayingsk' + this.sessionKey + 'track' + song.track + this.apiSecret)
+    , post_data = querystring.stringify({
+        method: 'track.updateNowPlaying',
+        api_key: this.apiKey,
+        sk: this.sessionKey,
+        api_sig: apiSig,
+        artist: song.artist,
+        track: song.track
+      })
+    , post_options = {
+        host: 'ws.audioscrobbler.com',
+        path: '/2.0/',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Length': post_data.length
+        }
+      }
+    , sendScrobble = http.request(post_options, function(request) {
+        var reqReturn = '';
+        request.setEncoding('utf8');
+        request.on('data', function(chunk) {
+          reqReturn += chunk;
+        });
+        request.on('end', function() {
+          console.log('[NOW PLAYING RESPONSE] : '+reqReturn);
+        });
+      }).on('error', function(err) {
+        // TODO
+      });
+  sendScrobble.write(post_data);
+  sendScrobble.end();
+}
 /**/// Public: Scrobble
 /**///
 /**/// Args
@@ -81,6 +128,20 @@ Scribble.prototype.Scrobble = function(song) {
     });
   } else {
     this.postScrobble(song)
+  }
+};
+/**/// Public: Now Playing
+/**///
+/**/// Args
+/**/// song - song object. artist, track keys
+Scribble.prototype.NowPlaying = function(song) {
+  if (this.sessionKey == null) {
+    var self = this;
+    this.MakeSession(function(sk) {
+      self.postNowPlaying(song,sk);
+    });
+  } else {
+    this.postNowPlaying(song)
   }
 };
 /**/// Public: Make session key
@@ -118,13 +179,6 @@ Scribble.prototype.MakeSession = function(callback) {
   }).on('error', function(err) {
     // TODO
   });
-};
-/**/// Public: Now Playing
-/**///
-/**/// Args
-/**/// song - song object. artist, track keys
-Scribble.prototype.NowPlaying = function(song) {
-  // TODO
 };
 /**/// Public: Make MD5 hashes
 /**///
