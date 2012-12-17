@@ -1,7 +1,7 @@
 /**/// GLOBALS
 var http        = require('http')
   , crypto      = require('crypto')
-  , querystring = require('querystring');
+  , querystring = require('querystring')
 /**/// Public: Scribble
 /**///
 /**/// Args
@@ -13,137 +13,54 @@ var http        = require('http')
 /**/// Returns
 /**/// return     - A scribble
 var Scribble = function(api_key, api_secret, username, password) {
-  this.apiKey     = api_key;
-  this.apiSecret  = api_secret;
-  this.username   = username;
-  this.password   = password;
-  this.sessionKey = null;
-};
-/**/// Public: Post Scrobble
-/**///
-/**/// Args
-/**/// song - song object. artist, track keys
-/**/// sk   - authenticated session key
-/**///
-/**/// Returns
-/**/// return - xml response from scrobble
-Scribble.prototype.postScrobble = function(song, sk) {
-  if (sk && this.sessionKey == null) {
-    this.sessionKey = sk;
-  }
-  var path = ''
-    , now = new Date().getTime()
-    , timestamp = Math.floor(now /1000)
-    , apiSig     = makeHash('api_key' + this.apiKey + 'artist' + song.artist + 'methodtrack.scrobblesk' + this.sessionKey + 'timestamp' + timestamp + 'track' + song.track + this.apiSecret)
-    , post_data = querystring.stringify({
-        method: 'track.scrobble',
-        api_key: this.apiKey,
-        sk: this.sessionKey,
-        api_sig: apiSig,
-        timestamp: timestamp,
-        artist: song.artist,
-        track: song.track
-      })
-    , post_options = {
-        host: 'ws.audioscrobbler.com',
-        path: '/2.0/',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': post_data.length
-        }
-      }
-    , sendScrobble = http.request(post_options, function(request) {
-        var reqReturn = '';
-        request.setEncoding('utf8');
-        request.on('data', function(chunk) {
-          reqReturn += chunk;
-        });
-        request.on('end', function() {
-          console.log('[SCROBBLE RESPONSE] : '+reqReturn);
-        });
-      }).on('error', function(err) {
-        // TODO
-      });
-  sendScrobble.write(post_data);
-  sendScrobble.end();
+  this.apiKey     = api_key
+  this.apiSecret  = api_secret
+  this.username   = username
+  this.password   = password
+  this.sessionKey = null
 }
-/**/// Public: Post Now Playing
+/**/// Public: Love
 /**///
 /**/// Args
 /**/// song - song object. artist, track keys
-/**/// sk   - authenticated session key
-/**///
-/**/// Returns
-/**/// return - xml response from scrobble
-Scribble.prototype.postNowPlaying = function(song, sk) {
-  if (sk && this.sessionKey == null) {
-    this.sessionKey = sk;
+Scribble.prototype.Love = function(song) {
+  var self = this
+  if (self.sessionKey == null) {
+    self.MakeSession(function(sk) {
+      postLove(self, song, sk)
+    })
+  } else {
+    postLove(self, song)
   }
-  var path = ''
-    , now = new Date().getTime()
-    , timestamp = Math.floor(now /1000)
-    , apiSig     = makeHash('api_key' + this.apiKey + 'artist' + song.artist + 'methodtrack.updateNowPlayingsk' + this.sessionKey + 'track' + song.track + this.apiSecret)
-    , post_data = querystring.stringify({
-        method: 'track.updateNowPlaying',
-        api_key: this.apiKey,
-        sk: this.sessionKey,
-        api_sig: apiSig,
-        artist: song.artist,
-        track: song.track
-      })
-    , post_options = {
-        host: 'ws.audioscrobbler.com',
-        path: '/2.0/',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': post_data.length
-        }
-      }
-    , sendScrobble = http.request(post_options, function(request) {
-        var reqReturn = '';
-        request.setEncoding('utf8');
-        request.on('data', function(chunk) {
-          reqReturn += chunk;
-        });
-        request.on('end', function() {
-          console.log('[NOW PLAYING RESPONSE] : '+reqReturn);
-        });
-      }).on('error', function(err) {
-        // TODO
-      });
-  sendScrobble.write(post_data);
-  sendScrobble.end();
 }
 /**/// Public: Scrobble
 /**///
 /**/// Args
 /**/// song - song object. artist, track keys
 Scribble.prototype.Scrobble = function(song) {
-  if (this.sessionKey == null) {
-    var self = this;
-    this.MakeSession(function(sk) {
-      self.postScrobble(song,sk);
-    });
+  var self = this
+  if (self.sessionKey == null) {
+    self.MakeSession(function(sk) {
+      postScrobble(self, song, sk)
+    })
   } else {
-    this.postScrobble(song)
+    postScrobble(self, song)
   }
-};
+}
 /**/// Public: Now Playing
 /**///
 /**/// Args
 /**/// song - song object. artist, track keys
 Scribble.prototype.NowPlaying = function(song) {
-  if (this.sessionKey == null) {
-    var self = this;
-    this.MakeSession(function(sk) {
-      self.postNowPlaying(song,sk);
-    });
+  var self = this
+  if (self.sessionKey == null) {
+    self.MakeSession(function(sk) {
+      postNowPlaying(self, song, sk)
+    })
   } else {
-    this.postNowPlaying(song)
+    postNowPlaying(self, song)
   }
-};
+}
 /**/// Public: Make session key
 /**///
 /**/// Args
@@ -164,23 +81,121 @@ Scribble.prototype.MakeSession = function(callback) {
                         host: 'ws.audioscrobbler.com',
                         port: 80,
                         path: path
-                      };
+                      }
   http.get(callValues, function(response) {
     response.on('data', function(chunk) {
       callResponse += chunk
-    });
+    })
     response.on('end', function() {
-      var test = JSON.parse(callResponse);
-      this.sessionKey = test.session.key;
+      var res = JSON.parse(callResponse)
+      this.sessionKey = res.session.key
       if (typeof(callback) == 'function') {
-        callback(test.session.key);
+        callback(res.session.key)
       }
-    });
+    })
   }).on('error', function(err) {
     // TODO
-  });
-};
-/**/// Public: Make MD5 hashes
+  })
+}
+/**/// Private: Build and send love request
+/**///
+/**/// Args
+/**/// self - your Scribble object
+/**/// song - song object. artist, track keys
+/**/// sk   - optional session key
+function postLove(self, song, sk) {
+  if (sk && self.sessionKey == null) {
+    self.sessionKey = sk
+  }
+  var apiSig    = makeHash('api_key' + self.apiKey + 'artist' + song.artist + 'methodtrack.lovesk' + self.sessionKey + 'track' + song.track + self.apiSecret)
+    , post_data = querystring.stringify({
+        method: 'track.love',
+        api_key: self.apiKey,
+        sk: self.sessionKey,
+        api_sig: apiSig,
+        artist: song.artist,
+        track: song.track
+      })
+  sendPost(post_data)
+}
+/**/// Private: Build and send now playing request
+/**///
+/**/// Args
+/**/// self - your Scribble object
+/**/// song - song object. artist, track keys
+/**/// sk   - optional session key
+function postNowPlaying(self, song, sk) {
+  if (sk && self.sessionKey == null) {
+    self.sessionKey = sk
+  }
+  var apiSig    = makeHash('api_key' + self.apiKey + 'artist' + song.artist + 'methodtrack.updateNowPlayingsk' + self.sessionKey + 'track' + song.track + self.apiSecret)
+    , post_data = querystring.stringify({
+        method: 'track.updateNowPlaying',
+        api_key: self.apiKey,
+        sk: self.sessionKey,
+        api_sig: apiSig,
+        artist: song.artist,
+        track: song.track
+      })
+  sendPost(post_data)
+}
+/**/// Private: Build and send scrobble request
+/**///
+/**/// Args
+/**/// self - your Scribble object
+/**/// song - song object. artist, track keys
+/**/// sk   - optional session key
+function postScrobble(self, song, sk) {
+  if (sk && self.sessionKey == null) {
+    self.sessionKey = sk
+  }
+  var now       = new Date().getTime()
+    , timestamp = Math.floor(now /1000)
+    , apiSig    = makeHash('api_key' + self.apiKey + 'artist' + song.artist + 'methodtrack.scrobblesk' + self.sessionKey + 'timestamp' + timestamp + 'track' + song.track + self.apiSecret)
+    , post_data = querystring.stringify({
+        method: 'track.scrobble',
+        api_key: self.apiKey,
+        sk: self.sessionKey,
+        api_sig: apiSig,
+        timestamp: timestamp,
+        artist: song.artist,
+        track: song.track
+      })
+  sendPost(post_data)
+}
+/**/// Private: Send POST requests to Last.fm
+/**///
+/**/// Args
+/**/// data - POST data object
+/**///
+/**/// Returns
+/**/// console - POST response from API
+function sendPost(data) {
+  var options = {
+        host: 'ws.audioscrobbler.com',
+        path: '/2.0/',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': data.length
+        }
+      }
+    , doPOST    = http.request(options, function(request) {
+        var reqReturn = ''
+        request.setEncoding('utf8')
+        request.on('data', function(chunk) {
+          reqReturn += chunk
+        })
+        request.on('end', function() {
+          console.log('[POST RESPONSE] : ' + reqReturn)
+        })
+      }).on('error', function(err) {
+        // TODO
+      })
+  doPOST.write(data)
+  doPOST.end()
+}
+/**/// Private: Make MD5 hashes
 /**///
 /**/// Args
 /**/// input - string input to hash
@@ -188,7 +203,7 @@ Scribble.prototype.MakeSession = function(callback) {
 /**/// Returns
 /**/// return - md5 hash of the input string
 function makeHash(input) {
-  return crypto.createHash('md5').update(input, 'utf8').digest("hex");
+  return crypto.createHash('md5').update(input, 'utf8').digest("hex")
 }
 
-module.exports = Scribble;
+module.exports = Scribble

@@ -13,17 +13,16 @@ Get a last.fm API account and save the api key, api secret, and your username an
 ###Use it
 
     var scribble = require('scribble');
+    // Build your scrobbler using your API keys and user info
     var Scrobbler = new scribble('your_api_key','your_api_secret','your_lastfm_username','your_lastfm_password');
+    // Make a song object in your app
     var song = {
       artist: 'Slayer',
       track: 'Disciple'
     };
+    // Now Playing
+    Scrobbler.NowPlaying(song);
+    // Scrobble
     Scrobbler.Scrobble(song);
-
-##F * A * Q
-
-* Q: This isnt working
-* A: Sorry....
-***
-* Q: Why doesn't it do now playing?
-* A: It will.
+    // Love
+    Scrobbler.Love(song);
