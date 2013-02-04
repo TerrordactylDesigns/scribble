@@ -21,10 +21,22 @@ var song = {
   artist: 'Slayer',
   track: 'Disciple'
 };
+
+/*
+  POST methods
+*/
 // Now Playing
-Scrobbler.NowPlaying(song);
+Scrobbler.NowPlaying(song, function(post_return_data) {});
 // Scrobble
-Scrobbler.Scrobble(song);
+Scrobbler.Scrobble(song, function(post_return_data) {});
 // Love
-Scrobbler.Love(song);
+Scrobbler.Love(song, function(post_return_data) {});
+
+/*
+  GET methods
+*/
+// Get Album
+Scrobbler.GetAlbum(song, function(album) {});
+// Get Artist Info
+Scrobbler.GetArtistInfo(song.artist, function(info) {});
 ```

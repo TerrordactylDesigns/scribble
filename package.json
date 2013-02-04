@@ -1,7 +1,7 @@
 {
   "name": "scribble",
-  "version": "0.0.3",
-  "description": "quick and sloppy Last.fm scrobbler",
+  "version": "0.1.0",
+  "description": "quick and sloppy Last.fm scrobbler and API library",
   "keywords": [
     "lastfm",
     "scrobble"
@@ -9,9 +9,9 @@
   "dependencies": {
   },
   "devDependencies": {
-    "nock": "*",
-    "mocha": "*",
-    "should": "*"
+    "nock": "0.x.x",
+    "mocha": "1.8.x",
+    "should": "1.2.x"
   },
   "license": "MIT",
   "engines": {

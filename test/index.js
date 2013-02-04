@@ -151,7 +151,7 @@ describe('[Now Playing]', function() {
   connection: 'close',
   'content-type': 'text/xml; charset=utf-8;' });
 */
-
+  // 5
   it('Should auto generate a key and return the post response', function(endTest) {
     scrobbler.NowPlaying(song, function(ret) {
       ret.should.not.equal('')
@@ -165,18 +165,40 @@ describe('[Now Playing]', function() {
   GETS
 */
 describe('[Album]', function() {
+  // 6
   it('should return the album from a properly formed song object in their database', function(endTest) {
     // mock request
     nock('http://ws.audioscrobbler.com:80')
         .get('/2.0/?method=track.getInfo&artist=' + song.artist + '&api_key=a&track=' + song.track + '&format=json')
         .reply(200, "{\"track\":{\"album\":{\"title\":\"God Hates Us All\"}}}\n", {})
-
     var scrobbler = new scribble('a','a','a','a')
-      //, album     = 
-
     scrobbler.GetAlbum(song, function(ret) {
-      ret.track.album.title.should.equal('God Hates Us All')
+      ret.should.equal('God Hates Us All')
       endTest()
     })
   })
 }) // [Album]
+
+describe('[Artist Info]', function() {
+  // 7
+  it('should return the artist infoe from a properly formed song object in their database', function(endTest) {
+    // mock request
+    nock('http://ws.audioscrobbler.com:80')
+        .get('/2.0/?method=artist.getInfo&artist=' + song.artist + '&api_key=a&format=json')
+        .reply(200, "{\"artist\":{\"bio\":{\"summary\":\"Slayer is basically the greatest metal band ever\"}}}\n", {})
+    var scrobbler = new scribble('a','a','a','a')
+    scrobbler.GetArtistInfo(song.artist, function(ret) {
+      ret.should.equal('Slayer is basically the greatest metal band ever')
+      endTest()
+    })
+  })
+}) // [Artist Info]
+
+describe('[Similar Artists]', function() {
+  // 8
+  it('should return x amount of artists', function(endTest) {
+
+    endTest()
+  })
+
+}) // [Similar Artists]

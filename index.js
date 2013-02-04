@@ -99,9 +99,65 @@ Scribble.prototype.MakeSession = function(callback) {
 }
 
 Scribble.prototype.GetAlbum = function(song, callback) {
-  var call  = '/2.0/?method=track.getInfo&artist=' + song.artist + '&api_key=' + this.apiKey + '&track=' + song.track + '&format=json'
-    , album = sendGet(call, callback)
-  //return album
+  var response  = ''
+    , apiCall   = {
+                    host: 'ws.audioscrobbler.com',
+                    port: 80,
+                    path: '/2.0/?method=track.getInfo&artist=' + song.artist + '&api_key=' + this.apiKey + '&track=' + song.track + '&format=json'
+                  }
+  http.get(apiCall, function(res) {
+    res.on('data', function(chunk) {
+      try {
+        response += chunk
+      } catch (err) {
+        // TODO
+        console.log(err)
+      }
+    })
+    res.on('end', function(){
+      try {
+        var ret = JSON.parse(response)
+        if (typeof(callback) == 'function')
+          callback(ret.track.album.title)
+      } catch (err) {
+        // TODO
+        console.log(err)
+      }
+    })
+  }).on('error', function(err) {
+    console.log(err.message)
+  })
+}
+
+Scribble.prototype.GetArtistInfo = function(artist, callback) {
+  var response  = ''
+    , apiCall   = {
+                    host: 'ws.audioscrobbler.com',
+                    port: 80,
+                    path: '/2.0/?method=artist.getInfo&artist=' + artist + '&api_key=' + this.apiKey + '&format=json'
+                  }
+  http.get(apiCall, function(res) {
+    res.on('data', function(chunk) {
+      try {
+        response += chunk
+      } catch (err) {
+        // TODO
+        console.log(err)
+      }
+    })
+    res.on('end', function(){
+      try {
+        var ret = JSON.parse(response)
+        if (typeof(callback) == 'function')
+          callback(ret.artist.bio.summary)
+      } catch (err) {
+        // TODO
+        console.log(err)
+      }
+    })
+  }).on('error', function(err) {
+    console.log(err.message)
+  })
 }
 
 /**/// Private: Build and send love request
