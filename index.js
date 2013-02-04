@@ -160,6 +160,44 @@ Scribble.prototype.GetArtistInfo = function(artist, callback) {
   })
 }
 
+Scribble.prototype.GetSimilarArtists = function(artist, callback, amt) {
+  var artists   = []
+    , response  = ''
+    , amt       = amt || 3
+    , apiCall   = {
+                    host: 'ws.audioscrobbler.com',
+                    port: 80,
+                    path: '/2.0/?method=artist.getSimilar&artist=' + artist + '&api_key=' + this.apiKey + '&format=json&limit=' + amt
+                  }
+  http.get(apiCall, function(res) {
+    res.on('data', function(chunk) {
+      try {
+        response += chunk
+      } catch (err) {
+        // TODO
+        console.log(err)
+      }
+    })
+    res.on('end', function(){
+      try {
+        var ret     = JSON.parse(response)
+          , artist  = ret.similarartists.artist
+        for (var i=0;i<artist.length;i++) {
+          artists.push(artist[i].name)
+        }
+        if (typeof(callback) == 'function')
+          callback(artists)
+      } catch (err) {
+        // TODO
+        console.log(err)
+      }
+    })
+  }).on('error', function(err) {
+    // TODO
+    console.log(err.message)
+  })
+}
+
 /**/// Private: Build and send love request
 /**///
 /**/// Args

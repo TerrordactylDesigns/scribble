@@ -39,4 +39,6 @@ Scrobbler.Love(song, function(post_return_data) {});
 Scrobbler.GetAlbum(song, function(album) {});
 // Get Artist Info
 Scrobbler.GetArtistInfo(song.artist, function(info) {});
+// Get Similar Artists
+Scrobbler.GetSimilarArtists(song.artist, function(artistArray) {}, optional_int_amount_defaults_to_3);
 ```

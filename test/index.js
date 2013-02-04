@@ -181,7 +181,7 @@ describe('[Album]', function() {
 
 describe('[Artist Info]', function() {
   // 7
-  it('should return the artist infoe from a properly formed song object in their database', function(endTest) {
+  it('should return the artist info from a properly formed song object in their database', function(endTest) {
     // mock request
     nock('http://ws.audioscrobbler.com:80')
         .get('/2.0/?method=artist.getInfo&artist=' + song.artist + '&api_key=a&format=json')
@@ -196,9 +196,40 @@ describe('[Artist Info]', function() {
 
 describe('[Similar Artists]', function() {
   // 8
-  it('should return x amount of artists', function(endTest) {
-
-    endTest()
+  it('should return an array of similar artists', function(endTest) {
+    var scrobbler = new scribble('a','a','a','a')
+    // mock request
+    nock('http://ws.audioscrobbler.com:80')
+      .get('/2.0/?method=artist.getSimilar&artist=' + song.artist + '&api_key=a&format=json&limit=3')
+      .reply(200, '{"similarartists": {"artist": [{"name": "Burnt By The Sun"},{"name": "Blood Has Been Shed"},{"name": "Vision Of Disorder"}]}}', {})
+    scrobbler.GetSimilarArtists(song.artist, function(ret) {
+      (ret instanceof Array).should.equal(true)
+      endTest()
+    })
   })
-
+  // 9
+  it('should return x amount of artists', function(endTest) {
+    // using 2 while mocked
+    var scrobbler = new scribble('a','a','a','a')
+    // mock request
+    nock('http://ws.audioscrobbler.com:80')
+      .get('/2.0/?method=artist.getSimilar&artist=' + song.artist + '&api_key=a&format=json&limit=2')
+      .reply(200, '{"similarartists": {"artist": [{"name": "Burnt By The Sun"},{"name": "Blood Has Been Shed"}]}}', {})
+    scrobbler.GetSimilarArtists(song.artist, function(ret) {
+      ret.should.have.lengthOf(2)
+      endTest()
+    }, 2)
+  })
+  // 10
+  it('should return 3 artists if no amount is set', function(endTest) {
+    var scrobbler = new scribble('a','a','a','a')
+    // mock request
+    nock('http://ws.audioscrobbler.com:80')
+      .get('/2.0/?method=artist.getSimilar&artist=' + song.artist + '&api_key=a&format=json&limit=3')
+      .reply(200, '{"similarartists": {"artist": [{"name": "Burnt By The Sun"},{"name": "Blood Has Been Shed"},{"name": "Vision Of Disorder"}]}}', {})
+    scrobbler.GetSimilarArtists(song.artist, function(ret) {
+      ret.should.have.lengthOf(3)
+      endTest()
+    })
+  })
 }) // [Similar Artists]
