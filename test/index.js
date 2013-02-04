@@ -5,6 +5,7 @@ var scribble  = require('../index')
   , nock      = require('nock')
   , should    = require('should')
   , crypto    = require('crypto')
+  , song      = { artist: 'Slayer', track: 'Disciple' }
 
 //nock.recorder.rec()
 /*
@@ -22,6 +23,10 @@ function makeHash(input) {
 }
 /*
   TESTS
+*/
+
+/*
+  POSTS
 */
 describe('[Object creation] :', function() {
   var scrobbler = new scribble('a','a','a','a')
@@ -48,7 +53,7 @@ describe('[MakeSession] :', function() {
     should.not.exist(scrobbler.sessionKey)
   })
   // 4
-  it('Should end with a sessionKey', function(done) {
+  it('Should end with a sessionKey', function(endTest) {
     /*
       nock.recorder.rec() output:
     
@@ -72,24 +77,49 @@ describe('[MakeSession] :', function() {
     scrobbler.MakeSession(function(key) {
       should.exist(key)
       key.should.equal('sweetkeybro')
-      done()
+      endTest()
     })
   })
 }) // [MakeSession]
 
 describe('[Love]', function() {
   var scrobbler = new scribble('a','a','a','a')
-    , song      = { artist: '', track: '' }
 }) // [Love]
 
 describe('[Scrobble]', function() {
   var scrobbler = new scribble('a','a','a','a')
-    , song      = { artist: '', track: '' }
+    , apiSig    = makeHash('api_keyaartist' + song.artist + 'methodtrack.scrobblesksweetkeybrotimestamp1359941414track' + song.track + 'a')
+
+  // 412aaebbf778278ade9f4d766da11721
+  // mock key request
+  nock('http://ws.audioscrobbler.com:80')
+      .get('/2.0/?method=auth.getMobileSession&username=a&authToken=e35bce2719cee48819fe422c51bec259&api_key=a&api_sig=99cad30a83f2c090f2d3de9d80fcaabe&format=json')
+      .reply(200, "{\"session\":{\"name\":\"GodOfThisAge\",\"key\":\"sweetkeybro\",\"subscriber\":\"0\"}}\n", {})
+  // mock post request
+  nock('http://ws.audioscrobbler.com:80')
+  .post('/2.0/', "method=track.scrobble&api_key=a&sk=sweetkeybro&api_sig=412aaebbf778278ade9f4d766da11721&timestamp=1359941414&artist=Slayer&track=Disciple")
+  .reply(200, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<lfm status=\"ok\">\n<scrobble>\n    <track corrected=\"0\">Disciple</track>\n    <artist corrected=\"0\">Slayer</artist>\n    <album corrected=\"0\"></album>\n    <albumArtist corrected=\"0\"></albumArtist>\n    <ignoredMessage code=\"0\"></ignoredMessage>\n</nowplaying></lfm>\n", { date: 'Mon, 04 Feb 2013 01:04:34 GMT',
+  server: 'Apache/2.2.22 (Unix)',
+  'x-web-node': 'www216',
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'POST, GET, OPTIONS',
+  'access-control-max-age': '86400',
+  'content-length': '301',
+  connection: 'close',
+  'content-type': 'text/xml; charset=utf-8;' })
+
+
+  // it('Should auto generate a key and return the post response', function(endTest) {
+  //   scrobbler.Scrobble(song, function(ret) {
+  //     ret.should.not.equal('')
+  //     ret.should.equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<lfm status=\"ok\">\n<scrobble>\n    <track corrected=\"0\">Disciple</track>\n    <artist corrected=\"0\">Slayer</artist>\n    <album corrected=\"0\"></album>\n    <albumArtist corrected=\"0\"></albumArtist>\n    <ignoredMessage code=\"0\"></ignoredMessage>\n</nowplaying></lfm>\n")
+  //     endTest()
+  //   })
+  // })
 }) // [Scrobble]
 
 describe('[Now Playing]', function() {
   var scrobbler = new scribble('a','a','a','a')
-    , song      = { artist: 'Slayer', track: 'Disciple' }
     , apiSig  = makeHash('api_keyaartistSlayermethodtrack.updateNowPlayingsksweetkeybrotrackDisciplea')
   // mock key request
   nock('http://ws.audioscrobbler.com:80')
@@ -122,11 +152,31 @@ describe('[Now Playing]', function() {
   'content-type': 'text/xml; charset=utf-8;' });
 */
 
-  it('Should auto generate a key and return the post response', function(done) {
+  it('Should auto generate a key and return the post response', function(endTest) {
     scrobbler.NowPlaying(song, function(ret) {
       ret.should.not.equal('')
       ret.should.equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<lfm status=\"ok\">\n<nowplaying>\n    <track corrected=\"0\">Disciple</track>\n    <artist corrected=\"0\">Slayer</artist>\n    <album corrected=\"0\"></album>\n    <albumArtist corrected=\"0\"></albumArtist>\n    <ignoredMessage code=\"0\"></ignoredMessage>\n</nowplaying></lfm>\n")
-      done()
+      endTest()
     })
   })
 }) // [Now Playing]
+
+/*
+  GETS
+*/
+describe('[Album]', function() {
+  it('should return the album from a properly formed song object in their database', function(endTest) {
+    // mock request
+    nock('http://ws.audioscrobbler.com:80')
+        .get('/2.0/?method=track.getInfo&artist=' + song.artist + '&api_key=a&track=' + song.track + '&format=json')
+        .reply(200, "{\"track\":{\"album\":{\"title\":\"God Hates Us All\"}}}\n", {})
+
+    var scrobbler = new scribble('a','a','a','a')
+      //, album     = 
+
+    scrobbler.GetAlbum(song, function(ret) {
+      ret.track.album.title.should.equal('God Hates Us All')
+      endTest()
+    })
+  })
+}) // [Album]

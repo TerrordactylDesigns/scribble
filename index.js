@@ -97,6 +97,13 @@ Scribble.prototype.MakeSession = function(callback) {
     // TODO
   })
 }
+
+Scribble.prototype.GetAlbum = function(song, callback) {
+  var call  = '/2.0/?method=track.getInfo&artist=' + song.artist + '&api_key=' + this.apiKey + '&track=' + song.track + '&format=json'
+    , album = sendGet(call, callback)
+  //return album
+}
+
 /**/// Private: Build and send love request
 /**///
 /**/// Args
@@ -197,6 +204,39 @@ function sendPost(data, callback) {
   doPOST.write(data)
   doPOST.end()
 }
+
+
+function sendGet(data, callback) {
+  var response  = ''
+    , apiCall   = {
+                    host: 'ws.audioscrobbler.com',
+                    port: 80,
+                    path: data
+                  }
+  http.get(apiCall, function(res) {
+    res.on('data', function(chunk) {
+      try {
+        response += chunk
+      } catch (err) {
+        // TODO
+        console.log(err)
+      }
+    })
+    res.on('end', function(){
+      try {
+        var ret = JSON.parse(response)
+        if (typeof(callback) == 'function')
+          callback(ret)
+      } catch (err) {
+        // TODO
+        console.log(err)
+      }
+    })
+  }).on('error', function(err) {
+    console.log(err.message)
+  })
+}
+
 /**/// Private: Make MD5 hashes
 /**///
 /**/// Args
