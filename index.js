@@ -72,10 +72,10 @@ Scribble.prototype.MakeSession = function(callback) {
   var token   = makeHash(this.username + makeHash(this.password))
     , apiSig  = makeHash('api_key' + this.apiKey + 'authToken' + token + 'methodauth.getMobileSessionusername' + this.username + this.apiSecret)
     , path    = '/2.0/?method=auth.getMobileSession&' +
-                'username=' + this.username + '&' +
-                'authToken=' + token + '&' +
-                'api_key=' + this.apiKey + '&' +
-                'api_sig=' + apiSig + '&format=json'
+                'username=' + this.username +
+                '&authToken=' + token +
+                '&api_key=' + this.apiKey +
+                '&api_sig=' + apiSig + '&format=json'
     , callResponse = ''
     , callValues   =  {
                         host: 'ws.audioscrobbler.com',
