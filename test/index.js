@@ -81,3 +81,52 @@ describe('[Love]', function() {
   var scrobbler = new scribble('a','a','a','a')
     , song      = { artist: '', track: '' }
 }) // [Love]
+
+describe('[Scrobble]', function() {
+  var scrobbler = new scribble('a','a','a','a')
+    , song      = { artist: '', track: '' }
+}) // [Scrobble]
+
+describe('[Now Playing]', function() {
+  var scrobbler = new scribble('a','a','a','a')
+    , song      = { artist: 'Slayer', track: 'Disciple' }
+    , apiSig  = makeHash('api_keyaartistSlayermethodtrack.updateNowPlayingsksweetkeybrotrackDisciplea')
+  // mock key request
+  nock('http://ws.audioscrobbler.com:80')
+      .get('/2.0/?method=auth.getMobileSession&username=a&authToken=e35bce2719cee48819fe422c51bec259&api_key=a&api_sig=99cad30a83f2c090f2d3de9d80fcaabe&format=json')
+      .reply(200, "{\"session\":{\"name\":\"GodOfThisAge\",\"key\":\"sweetkeybro\",\"subscriber\":\"0\"}}\n", {})
+  // mock post request
+  nock('http://ws.audioscrobbler.com:80')
+  .post('/2.0/', "method=track.updateNowPlaying&api_key=a&sk=sweetkeybro&api_sig=fae2ed6a254ac0f07cc838f3d676d0ab&artist=Slayer&track=Disciple")
+  .reply(200, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<lfm status=\"ok\">\n<nowplaying>\n    <track corrected=\"0\">Disciple</track>\n    <artist corrected=\"0\">Slayer</artist>\n    <album corrected=\"0\"></album>\n    <albumArtist corrected=\"0\"></albumArtist>\n    <ignoredMessage code=\"0\"></ignoredMessage>\n</nowplaying></lfm>\n", { date: 'Mon, 04 Feb 2013 01:04:34 GMT',
+  server: 'Apache/2.2.22 (Unix)',
+  'x-web-node': 'www216',
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'POST, GET, OPTIONS',
+  'access-control-max-age': '86400',
+  'content-length': '301',
+  connection: 'close',
+  'content-type': 'text/xml; charset=utf-8;' })
+
+/*
+  nock('http://ws.audioscrobbler.com:80')
+  .post('/2.0/', "method=track.updateNowPlaying&api_key=a8b2277c27ee94609c3fe266b533e74c&sk=ebbf9d4329ecdc403ffdfb37838b5c1d&api_sig=82e1aef36525b5206018ffb3fda11867&artist=Slayer&track=Disciple")
+  .reply(200, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<lfm status=\"ok\">\n<nowplaying>\n    <track corrected=\"0\">Disciple</track>\n    <artist corrected=\"0\">Slayer</artist>\n    <album corrected=\"0\"></album>\n    <albumArtist corrected=\"0\"></albumArtist>\n    <ignoredMessage code=\"0\"></ignoredMessage>\n</nowplaying></lfm>\n", { date: 'Mon, 04 Feb 2013 01:04:34 GMT',
+  server: 'Apache/2.2.22 (Unix)',
+  'x-web-node': 'www216',
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'POST, GET, OPTIONS',
+  'access-control-max-age': '86400',
+  'content-length': '301',
+  connection: 'close',
+  'content-type': 'text/xml; charset=utf-8;' });
+*/
+
+  it('Should auto generate a key and return the post response', function(done) {
+    scrobbler.NowPlaying(song, function(ret) {
+      ret.should.not.equal('')
+      ret.should.equal("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<lfm status=\"ok\">\n<nowplaying>\n    <track corrected=\"0\">Disciple</track>\n    <artist corrected=\"0\">Slayer</artist>\n    <album corrected=\"0\"></album>\n    <albumArtist corrected=\"0\"></albumArtist>\n    <ignoredMessage code=\"0\"></ignoredMessage>\n</nowplaying></lfm>\n")
+      done()
+    })
+  })
+}) // [Now Playing]
