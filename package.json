@@ -13,6 +13,10 @@
     "mocha": "1.8.x",
     "should": "1.2.x"
   },
+  "main": "index",
+  "scripts": {
+    "test": "make test"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=0.8.x"
