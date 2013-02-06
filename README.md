@@ -3,6 +3,8 @@
 
 #####Scribble down the song
 
+[![Build Status](https://travis-ci.org/TerrordactylDesigns/scribble.png?branch=master)](https://travis-ci.org/TerrordactylDesigns/scribble)
+
 ###PreReqs
 
 Get a last.fm API account and save the api key, api secret, and your username and password.
@@ -44,3 +46,9 @@ Scrobbler.GetSimilarArtists(song.artist, function(artistArray) { //artistArray i
 // Get Similar Songs
 Scrobbler.GetSimilarSongs(song, function(songArray) { //songArray is an array of song objects }, optional_return_amount_defaults_to_3);
 ```
+###Tests
+
+    npm install
+    make test
+    or
+    npm test
