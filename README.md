@@ -40,5 +40,7 @@ Scrobbler.GetAlbum(song, function(album) {});
 // Get Artist Info
 Scrobbler.GetArtistInfo(song.artist, function(info) {});
 // Get Similar Artists
-Scrobbler.GetSimilarArtists(song.artist, function(artistArray) {}, optional_int_amount_defaults_to_3);
+Scrobbler.GetSimilarArtists(song.artist, function(artistArray) { //artistArray is an array of artist names }, optional_return_amount_defaults_to_3);
+// Get Similar Songs
+Scrobbler.GetSimilarSongs(song, function(songArray) { //songArray is an array of song objects }, optional_return_amount_defaults_to_3);
 ```

@@ -97,7 +97,14 @@ Scribble.prototype.MakeSession = function(callback) {
     // TODO
   })
 }
-
+/**/// Public: does_something
+/**///
+/**/// Args
+/**/// song     - song object. artist, track keys
+/**/// callback - callback function
+/**///
+/**/// Returns
+/**/// title - album title
 Scribble.prototype.GetAlbum = function(song, callback) {
   var response  = ''
     , apiCall   = {
@@ -128,7 +135,14 @@ Scribble.prototype.GetAlbum = function(song, callback) {
     console.log(err.message)
   })
 }
-
+/**/// Public: GetArtistInfo
+/**///
+/**/// Args
+/**/// artist   - artist string
+/**/// callback - callback function
+/**///
+/**/// Returns
+/**/// summary  - artist summary
 Scribble.prototype.GetArtistInfo = function(artist, callback) {
   var response  = ''
     , apiCall   = {
@@ -159,7 +173,15 @@ Scribble.prototype.GetArtistInfo = function(artist, callback) {
     console.log(err.message)
   })
 }
-
+/**/// Public: GetSimilarArtists
+/**///
+/**/// Args
+/**/// artist   - artist string
+/**/// callback - callback function
+/**/// amt      - optional amount of returns
+/**///
+/**/// Returns
+/**/// tracks   - array of artist strings
 Scribble.prototype.GetSimilarArtists = function(artist, callback, amt) {
   var artists   = []
     , response  = ''
@@ -197,13 +219,60 @@ Scribble.prototype.GetSimilarArtists = function(artist, callback, amt) {
     console.log(err.message)
   })
 }
-
+/**/// Public: GetSimilarSongs
+/**///
+/**/// Args
+/**/// song     - song object. artist, track keys
+/**/// callback - callback function
+/**/// amt      - optional amount of returns
+/**///
+/**/// Returns
+/**/// tracks   - array of song objects
+Scribble.prototype.GetSimilarSongs = function(song, callback, amt) {
+  var tracks   = []
+    , response  = ''
+    , amt       = amt || 3
+    , apiCall   = {
+                    host: 'ws.audioscrobbler.com',
+                    port: 80,
+                    path: '/2.0/?method=track.getSimilar&artist=' + song.artist + '&track=' + song.track + '&api_key=' + this.apiKey + '&format=json&limit=' + amt
+                  }
+  http.get(apiCall, function(res) {
+    res.on('data', function(chunk) {
+      try {
+        response += chunk
+      } catch (err) {
+        // TODO
+        console.log(err)
+      }
+    })
+    res.on('end', function(){
+      try {
+        var ret    = JSON.parse(response)
+          , track  = ret.similartracks.track
+        for (var i=0;i<track.length;i++) {
+          var returnedSong = {"track": track[i].name, "artist": track[i].artist.name}
+          tracks.push(returnedSong)
+        }
+        if (typeof(callback) == 'function')
+          callback(tracks)
+      } catch (err) {
+        // TODO
+        console.log(err)
+      }
+    })
+  }).on('error', function(err) {
+    // TODO
+    console.log(err.message)
+  })
+}
 /**/// Private: Build and send love request
 /**///
 /**/// Args
-/**/// self - your Scribble object
-/**/// song - song object. artist, track keys
-/**/// sk   - optional session key
+/**/// self     - your Scribble object
+/**/// song     - song object. artist, track keys
+/**/// sk       - optional session key
+/**/// callback - callback function
 function postLove(self, song, sk, callback) {
   if (sk && self.sessionKey == null) {
     self.sessionKey = sk
@@ -222,9 +291,10 @@ function postLove(self, song, sk, callback) {
 /**/// Private: Build and send now playing request
 /**///
 /**/// Args
-/**/// self - your Scribble object
-/**/// song - song object. artist, track keys
-/**/// sk   - optional session key
+/**/// self     - your Scribble object
+/**/// song     - song object. artist, track keys
+/**/// sk       - optional session key
+/**/// callback - callback function
 function postNowPlaying(self, song, sk, callback) {
   if (sk && self.sessionKey == null) {
     self.sessionKey = sk
@@ -243,9 +313,10 @@ function postNowPlaying(self, song, sk, callback) {
 /**/// Private: Build and send scrobble request
 /**///
 /**/// Args
-/**/// self - your Scribble object
-/**/// song - song object. artist, track keys
-/**/// sk   - optional session key
+/**/// self     - your Scribble object
+/**/// song     - song object. artist, track keys
+/**/// sk       - optional session key
+/**/// callback - callback function
 function postScrobble(self, song, sk, callback) {
   if (sk && self.sessionKey == null) {
     self.sessionKey = sk
@@ -267,10 +338,11 @@ function postScrobble(self, song, sk, callback) {
 /**/// Private: Send POST requests to Last.fm
 /**///
 /**/// Args
-/**/// data - POST data object
+/**/// data     - POST data object
+/**/// callback - callback function
 /**///
 /**/// Returns
-/**/// console - POST response from API
+/**/// console  - POST response from API
 function sendPost(data, callback) {
   var options = {
         host: 'ws.audioscrobbler.com',
@@ -298,39 +370,6 @@ function sendPost(data, callback) {
   doPOST.write(data)
   doPOST.end()
 }
-
-
-function sendGet(data, callback) {
-  var response  = ''
-    , apiCall   = {
-                    host: 'ws.audioscrobbler.com',
-                    port: 80,
-                    path: data
-                  }
-  http.get(apiCall, function(res) {
-    res.on('data', function(chunk) {
-      try {
-        response += chunk
-      } catch (err) {
-        // TODO
-        console.log(err)
-      }
-    })
-    res.on('end', function(){
-      try {
-        var ret = JSON.parse(response)
-        if (typeof(callback) == 'function')
-          callback(ret)
-      } catch (err) {
-        // TODO
-        console.log(err)
-      }
-    })
-  }).on('error', function(err) {
-    console.log(err.message)
-  })
-}
-
 /**/// Private: Make MD5 hashes
 /**///
 /**/// Args

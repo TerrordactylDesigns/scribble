@@ -233,3 +233,44 @@ describe('[Similar Artists]', function() {
     })
   })
 }) // [Similar Artists]
+
+describe('[Similar Songs]', function() {
+  // 8
+  it('should return an array of similar songs', function(endTest) {
+    var scrobbler = new scribble('a','a','a','a')
+    // mock request
+    nock('http://ws.audioscrobbler.com:80')
+      .get('/2.0/?method=track.getSimilar&artist=' + song.artist + '&track=' + song.track + '&api_key=a&format=json&limit=3')
+      .reply(200, '{"similartracks": {"track": [{"name":"blah", "artist":{"name": "Burnt By The Sun"}},{"name":"blah", "artist":{"name": "Blood Has Been Shed"}},{"name":"blah", "artist":{"name": "Vision Of Disorder"}}]}}', {})
+    scrobbler.GetSimilarSongs(song, function(ret) {
+      (ret instanceof Array).should.equal(true)
+      endTest()
+    })
+  })
+  // 9
+  it('should return x amount of songs', function(endTest) {
+    // using 2 while mocked
+    var scrobbler = new scribble('a','a','a','a')
+    // mock request
+    nock('http://ws.audioscrobbler.com:80')
+      .get('/2.0/?method=track.getSimilar&artist=' + song.artist + '&track=' + song.track + '&api_key=a&format=json&limit=2')
+      .reply(200, '{"similartracks": {"track": [{"name":"blah", "artist":{"name": "Blood Has Been Shed"}},{"name":"blah", "artist":{"name": "Vision Of Disorder"}}]}}', {})
+    scrobbler.GetSimilarSongs(song, function(ret) {
+      ret.should.have.lengthOf(2)
+      endTest()
+    }, 2)
+  })
+  // 10
+  it('should return 3 songs if no amount is set', function(endTest) {
+    var scrobbler = new scribble('a','a','a','a')
+    // mock request
+    nock('http://ws.audioscrobbler.com:80')
+      .get('/2.0/?method=track.getSimilar&artist=' + song.artist + '&track=' + song.track + '&api_key=a&format=json&limit=3')
+      .reply(200, '{"similartracks": {"track": [{"name":"blah", "artist":{"name": "Burnt By The Sun"}},{"name":"blah", "artist":{"name": "Blood Has Been Shed"}},{"name":"blah", "artist":{"name": "Vision Of Disorder"}}]}}', {})
+    scrobbler.GetSimilarSongs(song, function(ret) {
+      ret.should.have.lengthOf(3)
+      endTest()
+    })
+  })
+}) // [Similar Songs]
+
