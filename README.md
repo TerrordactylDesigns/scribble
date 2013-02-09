@@ -26,6 +26,7 @@ var song = {
 
 /*
   POST methods
+  All return the XML response from the POST request
 */
 // Now Playing
 Scrobbler.NowPlaying(song, function(post_return_data) {});
@@ -36,15 +37,16 @@ Scrobbler.Love(song, function(post_return_data) {});
 
 /*
   GET methods
+  All return the parsed JSON response from Last.fm
 */
 // Get Album
-Scrobbler.GetAlbum(song, function(album) {});
+Scrobbler.GetAlbum(song, function(ret) {});
 // Get Artist Info
-Scrobbler.GetArtistInfo(song.artist, function(info) {});
+Scrobbler.GetArtistInfo(song.artist, function(ret) {});
 // Get Similar Artists
-Scrobbler.GetSimilarArtists(song.artist, function(artistArray) { //artistArray is an array of artist names }, optional_return_amount_defaults_to_3);
+Scrobbler.GetSimilarArtists(song.artist, function(ret) {}, optional_return_amount_defaults_to_50);
 // Get Similar Songs
-Scrobbler.GetSimilarSongs(song, function(songArray) { //songArray is an array of song objects }, optional_return_amount_defaults_to_3);
+Scrobbler.GetSimilarSongs(song, function(ret) {}, optional_return_amount_defaults_to_50);
 ```
 ###Tests
 
