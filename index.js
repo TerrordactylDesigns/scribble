@@ -82,21 +82,6 @@ Scribble.prototype.MakeSession = function(callback) {
       callback(ret.session.key)
   })
 }
-/**/// Public: does_something
-/**///
-/**/// Args
-/**/// song     - song object. artist, track keys
-/**/// callback - callback function
-/**///
-/**/// Returns
-/**/// title - album title
-Scribble.prototype.GetAlbum = function(song, callback) {
-  var path = '/2.0/?method=track.getInfo&artist=' + song.artist + '&api_key=' + this.apiKey + '&track=' + song.track + '&format=json'
-  sendGet(path, function(ret) {
-    if (typeof(callback) == 'function')
-      callback(ret.track.album.title)
-  })
-}
 /**/// Public: GetArtistInfo
 /**///
 /**/// Args
@@ -109,7 +94,7 @@ Scribble.prototype.GetArtistInfo = function(artist, callback) {
   var path = '/2.0/?method=artist.getInfo&artist=' + artist + '&api_key=' + this.apiKey + '&format=json'
   sendGet(path, function(ret) {
     if (typeof(callback) == 'function')
-      callback(ret.artist.bio.summary)
+      callback(ret)
   })
 }
 /**/// Public: GetSimilarArtists
@@ -122,15 +107,11 @@ Scribble.prototype.GetArtistInfo = function(artist, callback) {
 /**/// Returns
 /**/// tracks   - array of artist strings
 Scribble.prototype.GetSimilarArtists = function(artist, callback, amt) {
-  var artists = []
-    , amt     = amt || 3
+  var amt     = amt || 50
     , path    = '/2.0/?method=artist.getSimilar&artist=' + artist + '&api_key=' + this.apiKey + '&format=json&limit=' + amt
   sendGet(path, function(ret) {
-    var artist = ret.similarartists.artist
-    for (var i=0;i<artist.length;i++)
-      artists.push(artist[i].name)
-    if (typeof(callback) == 'function')
-      callback(artists)
+   if (typeof(callback) == 'function')
+      callback(ret)
   })
 }
 /**/// Public: GetSimilarSongs
@@ -143,17 +124,11 @@ Scribble.prototype.GetSimilarArtists = function(artist, callback, amt) {
 /**/// Returns
 /**/// tracks   - array of song objects
 Scribble.prototype.GetSimilarSongs = function(song, callback, amt) {
-  var tracks = []
-    , amt     = amt || 3
+  var amt     = amt || 50
     , path    = '/2.0/?method=track.getSimilar&artist=' + song.artist + '&track=' + song.track + '&api_key=' + this.apiKey + '&format=json&limit=' + amt
   sendGet(path, function(ret) {
-    var track = ret.similartracks.track
-    for (var i=0;i<track.length;i++) {
-      var returnedSong = {"track": track[i].name, "artist": track[i].artist.name}
-      tracks.push(returnedSong)
-    }
     if (typeof(callback) == 'function')
-      callback(tracks)
+      callback(ret)
   })
 }
 /**/// Private: Build and send love request
@@ -287,6 +262,7 @@ function sendGet(path, callback) {
     res.on('end', function() {
       try {
         var ret = JSON.parse(response)
+        //var ret = response
         if (typeof(callback) == 'function')
           callback(ret)
       } catch(err) {
