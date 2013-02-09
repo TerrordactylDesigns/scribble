@@ -76,25 +76,10 @@ Scribble.prototype.MakeSession = function(callback) {
                 '&authToken=' + token +
                 '&api_key=' + this.apiKey +
                 '&api_sig=' + apiSig + '&format=json'
-    , callResponse = ''
-    , callValues   =  {
-                        host: 'ws.audioscrobbler.com',
-                        port: 80,
-                        path: path
-                      }
-  http.get(callValues, function(response) {
-    response.on('data', function(chunk) {
-      callResponse += chunk
-    })
-    response.on('end', function() {
-      var res = JSON.parse(callResponse)
-      this.sessionKey = res.session.key
-      if (typeof(callback) == 'function') {
-        callback(res.session.key)
-      }
-    })
-  }).on('error', function(err) {
-    // TODO
+  sendGet(path, function(ret) {
+    Scribble.sessionKey = ret.session.key
+    if (typeof(callback) == 'function')
+      callback(ret.session.key)
   })
 }
 /**/// Public: does_something
