@@ -148,6 +148,17 @@ Scribble.prototype.GetArtistEvents = function(artist, callback, amt) {
       callback(ret)
   })
 }
+
+Scribble.prototype.GetTopAlbums = function(artist, callback, amt) {
+  var amt   = amt || 50
+    , path  = '/2.0/?method=artist.gettopalbums&artist=' + artist + '&api_key=' + this.apiKey + '&format=json&limit=' + amt
+  sendGet(path, function(ret) {
+    if (typeof(callback) == 'function')
+      callback(ret)
+  })
+}
+
+
 /**/// Private: postLove
 /**///
 /**/// Args

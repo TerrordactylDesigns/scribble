@@ -49,6 +49,8 @@ Scrobbler.GetSimilarArtists(song.artist, function(ret) {}, optional_return_amoun
 Scrobbler.GetSimilarSongs(song, function(ret) {}, optional_return_amount_defaults_to_50);
 // Get Artist Events
 Scrobbler.GetArtistEvents(song.artist, function(ret) {}, optional_return_amount_defaults_to_50);
+// Get Artist Top Albums
+Scrobbler.GetTopAlbums(song.artist, function(ret) {}, optional_return_amount_defaults_to_50);
 ```
 ###Tests
 
