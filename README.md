@@ -26,7 +26,7 @@ var song = {
 
 /*
   POST methods
-  All return the XML response from the POST request
+  All return the XML response from the POST requesta
 */
 // Now Playing
 Scrobbler.NowPlaying(song, function(post_return_data) {});
@@ -47,6 +47,8 @@ Scrobbler.GetArtistInfo(song.artist, function(ret) {});
 Scrobbler.GetSimilarArtists(song.artist, function(ret) {}, optional_return_amount_defaults_to_50);
 // Get Similar Songs
 Scrobbler.GetSimilarSongs(song, function(ret) {}, optional_return_amount_defaults_to_50);
+// Get Artist Events
+Scrobbler.GetArtistEvents(song.artist, function(ret) {}, optional_return_amount_defaults_to_50);
 ```
 ###Tests
 
