@@ -45,14 +45,16 @@ Scrobbler.GetAlbum(song, function(ret) {});
 Scrobbler.GetArtistInfo(song.artist, function(ret) {});
 // Get Similar Artists
 Scrobbler.GetSimilarArtists(song.artist, function(ret) {}, optional_return_amount_defaults_to_50);
-// Get Similar Songs
-Scrobbler.GetSimilarSongs(song, function(ret) {}, optional_return_amount_defaults_to_50);
 // Get Artist Events
 Scrobbler.GetArtistEvents(song.artist, function(ret) {}, optional_return_amount_defaults_to_50);
 // Get Artist Top Albums
 Scrobbler.GetTopAlbums(song.artist, function(ret) {}, optional_return_amount_defaults_to_50);
 // Get Artist Top Tracks
 Scrobbler.GetArtistTopTracks(song.artist, function(ret) {}, optional_return_amount_defaults_to_50);
+// Get Similar Songs
+Scrobbler.GetSimilarSongs(song, function(ret) {}, optional_return_amount_defaults_to_50);
+// Get Track Info
+Scrobbler.GetTrackInfo(song, function(ret) {});
 ```
 ###Tests
 

@@ -114,23 +114,6 @@ Scribble.prototype.GetSimilarArtists = function(artist, callback, amt) {
       callback(ret)
   })
 }
-/**/// Public: GetSimilarSongs
-/**///
-/**/// Args
-/**/// song     - song object. artist, track keys
-/**/// callback - callback function
-/**/// amt      - optional amount of returns
-/**///
-/**/// Returns
-/**/// return   - object of similar songs
-Scribble.prototype.GetSimilarSongs = function(song, callback, amt) {
-  var amt   = amt || 50
-    , path  = '/2.0/?method=track.getSimilar&artist=' + song.artist + '&track=' + song.track + '&api_key=' + this.apiKey + '&format=json&limit=' + amt
-  sendGet(path, function(ret) {
-    if (typeof(callback) == 'function')
-      callback(ret)
-  })
-}
 /**/// Public: GetArtistEvents
 /**///
 /**/// Args
@@ -177,6 +160,33 @@ Scribble.prototype.GetArtistTopAlbums = function(artist, callback, amt) {
 Scribble.prototype.GetArtistTopTracks = function(artist, callback, amt) {
   var amt   = amt || 50
     , path  = '/2.0/?method=artist.gettoptracks&artist=' + artist + '&api_key=' + this.apiKey + '&format=json&limit=' + amt
+  sendGet(path, function(ret) {
+    if (typeof(callback) == 'function')
+      callback(ret)
+  })
+}
+/**/// Public: GetSimilarSongs
+/**///
+/**/// Args
+/**/// song     - song object. artist, track keys
+/**/// callback - callback function
+/**/// amt      - optional amount of returns
+/**///
+/**/// Returns
+/**/// return   - object of similar songs
+Scribble.prototype.GetSimilarSongs = function(song, callback, amt) {
+  var amt   = amt || 50
+    , path  = '/2.0/?method=track.getSimilar&artist=' + song.artist + '&track=' + song.track + '&api_key=' + this.apiKey + '&format=json&limit=' + amt
+  sendGet(path, function(ret) {
+    if (typeof(callback) == 'function')
+      callback(ret)
+  })
+}
+
+
+
+Scribble.prototype.GetTrackInfo = function(song, callback) {
+  var path = '/2.0/?method=track.getInfo&api_key=' + this.apiKey + '&artist=' + song.artist + '&track=' + song.track + '&format=json'
   sendGet(path, function(ret) {
     if (typeof(callback) == 'function')
       callback(ret)
