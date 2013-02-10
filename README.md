@@ -22,7 +22,7 @@ var Scrobbler = new scribble('your_api_key','your_api_secret','your_lastfm_usern
 var song = {
   artist: 'Slayer',
   track: 'Disciple',
-  album: 'God Hates Us All'
+  album: 'God Hates Us All' // Only needed for album info call
 };
 
 /*
