@@ -21,7 +21,8 @@ var Scrobbler = new scribble('your_api_key','your_api_secret','your_lastfm_usern
 // Make a song object in your app
 var song = {
   artist: 'Slayer',
-  track: 'Disciple'
+  track: 'Disciple',
+  album: 'God Hates Us All'
 };
 
 /*
@@ -55,6 +56,8 @@ Scrobbler.GetArtistTopTracks(song.artist, function(ret) {}, optional_return_amou
 Scrobbler.GetSimilarSongs(song, function(ret) {}, optional_return_amount_defaults_to_50);
 // Get Track Info
 Scrobbler.GetTrackInfo(song, function(ret) {});
+// Get Album Info
+Scrobbler.GetAlbumInfo(song, function(ret) {});
 ```
 ###Tests
 

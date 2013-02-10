@@ -182,11 +182,32 @@ Scribble.prototype.GetSimilarSongs = function(song, callback, amt) {
       callback(ret)
   })
 }
-
-
-
+/**/// Public: GetTrackInfo
+/**///
+/**/// Args
+/**/// song     - song object. artist, track keys
+/**/// callback - callback function
+/**///
+/**/// Returns
+/**/// return   - object of track info
 Scribble.prototype.GetTrackInfo = function(song, callback) {
   var path = '/2.0/?method=track.getInfo&api_key=' + this.apiKey + '&artist=' + song.artist + '&track=' + song.track + '&format=json'
+  sendGet(path, function(ret) {
+    if (typeof(callback) == 'function')
+      callback(ret)
+  })
+}
+/**/// Public: GetAlbumInfo
+/**///
+/**/// Args
+/**/// song     - song object. artist, track, album keys
+/**/// callback - callback function
+/**///
+/**/// Returns
+/**/// return   - object of album information
+Scribble.prototype.GetAlbumInfo = function(song, callback) {
+  song.album = song.album.replace(/\s/g, '%20')
+  var path = '2.0/?method=album.getinfo&api_key=' + this.apiKey + '&artist=' + song.artist + '&album=' + song.album + '&format=json'
   sendGet(path, function(ret) {
     if (typeof(callback) == 'function')
       callback(ret)
@@ -340,7 +361,7 @@ function sendGet(path, callback) {
           callback(ret)
       } catch(err) {
         // TODO
-        console.log(err)
+        console.log('[INVALID RETURN] the return was invalid JSON: ' + err)
       }
     })
   }).on('error', function(err) {
