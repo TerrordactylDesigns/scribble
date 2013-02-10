@@ -148,8 +148,16 @@ Scribble.prototype.GetArtistEvents = function(artist, callback, amt) {
       callback(ret)
   })
 }
-
-Scribble.prototype.GetTopAlbums = function(artist, callback, amt) {
+/**/// Public: GetArtistTopAlbums
+/**///
+/**/// Args
+/**/// song     - song object. artist, track keys
+/**/// callback - callback function
+/**/// amt      - optional amount of returns
+/**///
+/**/// Returns
+/**/// return   - object of artist top albums
+Scribble.prototype.GetArtistTopAlbums = function(artist, callback, amt) {
   var amt   = amt || 50
     , path  = '/2.0/?method=artist.gettopalbums&artist=' + artist + '&api_key=' + this.apiKey + '&format=json&limit=' + amt
   sendGet(path, function(ret) {
@@ -157,8 +165,23 @@ Scribble.prototype.GetTopAlbums = function(artist, callback, amt) {
       callback(ret)
   })
 }
-
-
+/**/// Public: GetArtistTopTracks
+/**///
+/**/// Args
+/**/// song     - song object. artist, track keys
+/**/// callback - callback function
+/**/// amt      - optional amount of returns
+/**///
+/**/// Returns
+/**/// return   - object of artist top tracks
+Scribble.prototype.GetArtistTopTracks = function(artist, callback, amt) {
+  var amt   = amt || 50
+    , path  = '/2.0/?method=artist.gettoptracks&artist=' + artist + '&api_key=' + this.apiKey + '&format=json&limit=' + amt
+  sendGet(path, function(ret) {
+    if (typeof(callback) == 'function')
+      callback(ret)
+  })
+}
 /**/// Private: postLove
 /**///
 /**/// Args
