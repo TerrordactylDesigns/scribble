@@ -242,7 +242,7 @@ function postLove(self, song, sk, callback) {
 /**///
 /**/// Args
 /**/// self     - your Scribble object
-/**/// song     - song object. artist, track keys
+/**/// song     - song object. artist, track and optionally, duration keys
 /**/// sk       - optional session key
 /**/// callback - callback function
 /**///
@@ -252,15 +252,33 @@ function postNowPlaying(self, song, sk, callback) {
   if (sk && self.sessionKey == null) {
     self.sessionKey = sk
   }
-  var apiSig    = makeHash('api_key' + self.apiKey + 'artist' + song.artist + 'methodtrack.updateNowPlayingsk' + self.sessionKey + 'track' + song.track + self.apiSecret)
-    , post_data = querystring.stringify({
-        method: 'track.updateNowPlaying',
-        api_key: self.apiKey,
-        sk: self.sessionKey,
-        api_sig: apiSig,
-        artist: song.artist,
-        track: song.track
-      })
+
+  var dataObj = {
+    method: 'track.updateNowPlaying',
+    api_key: self.apiKey,
+    sk: self.sessionKey,
+    artist: song.artist,
+    track: song.track
+  },
+    apiSig
+
+  if (song.duration) {
+    apiSig = makeHash('api_key' + self.apiKey + 'artist' + song.artist
+      + 'duration' + song.duration + 'methodtrack.updateNowPlayingsk'
+      + self.sessionKey + 'track' + song.track + self.apiSecret)
+
+    dataObj.api_sig = apiSig
+    dataObj.duration = song.duration
+  }
+  else {
+    apiSig = makeHash('api_key' + self.apiKey + 'artist' + song.artist
+      + 'methodtrack.updateNowPlayingsk' + self.sessionKey + 'track'
+      + song.track + self.apiSecret)
+
+    dataObj.api_sig = apiSig
+  }
+
+  var post_data = querystring.stringify(dataObj)
   sendPost(post_data, callback)
 }
 /**/// Private: postScrobble
