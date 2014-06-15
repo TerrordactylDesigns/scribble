@@ -22,6 +22,7 @@ var Scrobbler = new scribble('your_api_key','your_api_secret','your_lastfm_usern
 var song = {
   artist: 'Slayer',
   track: 'Disciple',
+  length: '240', // Length of track in seconds. Apparently Last.fm doesn't like decimals so round down to the nearest second if needed.
   album: 'God Hates Us All' // Only needed for album info call
 };
 
