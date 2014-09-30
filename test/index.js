@@ -5,7 +5,7 @@ var scribble  = require('../index')
   , nock      = require('nock')
   , should    = require('should')
   , crypto    = require('crypto')
-  , song      = { artist: 'Slayer', track: 'Disciple', album: 'God Hates Us All' }
+  , song      = { artist: 'Slayer', track: 'Disciple', album: 'God Hates Us All', duration: 300 }
 //nock.recorder.rec()
 /*
   FUNCTIONS
@@ -103,14 +103,15 @@ describe('[Scrobble]', function() {
 
 describe('[Now Playing]', function() {
   var scrobbler = new scribble('a','a','a','a')
-    , apiSig  = makeHash('api_keyaartistSlayermethodtrack.updateNowPlayingsksweetkeybrotrackDisciplea')
+    , apiSig  = makeHash('api_keyaartistSlayerduration300methodtrack.updateNowPlayingsksweetkeybrotrackDisciplea')
+
   // mock key request
   nock('http://ws.audioscrobbler.com:80')
       .get('/2.0/?method=auth.getMobileSession&username=a&authToken=e35bce2719cee48819fe422c51bec259&api_key=a&api_sig=99cad30a83f2c090f2d3de9d80fcaabe&format=json')
       .reply(200, "{\"session\":{\"name\":\"GodOfThisAge\",\"key\":\"sweetkeybro\",\"subscriber\":\"0\"}}\n", {})
   // mock post request
   nock('http://ws.audioscrobbler.com:80')
-  .post('/2.0/', "method=track.updateNowPlaying&api_key=a&sk=sweetkeybro&api_sig=fae2ed6a254ac0f07cc838f3d676d0ab&artist=Slayer&track=Disciple")
+  .post('/2.0/', "method=track.updateNowPlaying&artist=Slayer&track=Disciple&duration=300&api_key=a&api_sig=4b1c91c53596650337796e7cfc0856fe&sk=sweetkeybro")
   .reply(200, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<lfm status=\"ok\">\n<nowplaying>\n    <track corrected=\"0\">Disciple</track>\n    <artist corrected=\"0\">Slayer</artist>\n    <album corrected=\"0\"></album>\n    <albumArtist corrected=\"0\"></albumArtist>\n    <ignoredMessage code=\"0\"></ignoredMessage>\n</nowplaying></lfm>\n", { date: 'Mon, 04 Feb 2013 01:04:34 GMT',
   server: 'Apache/2.2.22 (Unix)',
   'x-web-node': 'www216',

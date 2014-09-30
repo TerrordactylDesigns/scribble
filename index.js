@@ -206,8 +206,8 @@ Scribble.prototype.GetTrackInfo = function(song, callback) {
 /**/// Returns
 /**/// return   - object of album information
 Scribble.prototype.GetAlbumInfo = function(song, callback) {
-  song.album = song.album.replace(/\s/g, '%20')
-  var path = '2.0/?method=album.getinfo&api_key=' + this.apiKey + '&artist=' + song.artist + '&album=' + song.album + '&format=json'
+  song.album  = song.album.replace(/\s/g, '%20')
+  var path    = '2.0/?method=album.getinfo&api_key=' + this.apiKey + '&artist=' + song.artist + '&album=' + song.album + '&format=json'
   sendGet(path, function(ret) {
     if (typeof(callback) == 'function')
       callback(ret)
@@ -252,14 +252,16 @@ function postNowPlaying(self, song, sk, callback) {
   if (sk && self.sessionKey == null) {
     self.sessionKey = sk
   }
-  var apiSig    = makeHash('api_key' + self.apiKey + 'artist' + song.artist + 'methodtrack.updateNowPlayingsk' + self.sessionKey + 'track' + song.track + self.apiSecret)
+  var dur       = (song.duration) ? 'duration' + song.duration : ''
+    , apiSig    = makeHash('api_key' + self.apiKey + 'artist' + song.artist + dur + 'methodtrack.updateNowPlayingsk' + self.sessionKey + 'track' + song.track + self.apiSecret)
     , post_data = querystring.stringify({
         method: 'track.updateNowPlaying',
-        api_key: self.apiKey,
-        sk: self.sessionKey,
-        api_sig: apiSig,
         artist: song.artist,
-        track: song.track
+        track: song.track,
+        duration: song.duration,
+        api_key: self.apiKey,
+        api_sig: apiSig,
+        sk: self.sessionKey
       })
   sendPost(post_data, callback)
 }
@@ -312,7 +314,7 @@ function sendPost(data, callback) {
           'Content-Length': data.length
         }
       }
-    , doPOST    = http.request(options, function(request) {
+    , doPOST = http.request(options, function(request) {
         var reqReturn = ''
         request.setEncoding('utf8')
         request.on('data', function(chunk) {
