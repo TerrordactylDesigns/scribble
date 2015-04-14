@@ -2,6 +2,7 @@
 var http        = require('http')
   , crypto      = require('crypto')
   , querystring = require('querystring')
+  , self        = this
 /**/// Public: Scribble
 /**///
 /**/// Args
@@ -12,12 +13,13 @@ var http        = require('http')
 /**///
 /**/// Returns
 /**/// return     - A scribble
-var Scribble = function(api_key, api_secret, username, password) {
+var Scribble = function(api_key, api_secret, username, password, debug) {
   this.apiKey     = api_key
   this.apiSecret  = api_secret
   this.username   = username
   this.password   = password
   this.sessionKey = null
+  self.debug      = (typeof debug !== 'undefined' ? debug : false);
 }
 /**/// Public: Love
 /**///
@@ -321,7 +323,7 @@ function sendPost(data, callback) {
           reqReturn += chunk
         })
         request.on('end', function() {
-          console.log('[POST RESPONSE] : ' + reqReturn)
+          if (self.debug) console.log('[POST RESPONSE] : ' + reqReturn)
           if (typeof(callback) == 'function')
             callback(reqReturn)
         })
@@ -352,7 +354,7 @@ function sendGet(path, callback) {
         response += chunk
       } catch(err) {
         // TODO
-        console.log(err)
+        if (self.debug) console.log(err)
       }
     })
     res.on('end', function() {
@@ -363,11 +365,11 @@ function sendGet(path, callback) {
           callback(ret)
       } catch(err) {
         // TODO
-        console.log('[INVALID RETURN] the return was invalid JSON: ' + err)
+        if (self.debug) console.log('[INVALID RETURN] the return was invalid JSON: ' + err)
       }
     })
   }).on('error', function(err) {
-    console.log(err.message)
+    if (self.debug) console.log(err.message)
   })
 }
 /**/// Private: makeHash

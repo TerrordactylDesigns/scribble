@@ -16,7 +16,7 @@ Get a last.fm API account and save the api key, api secret, and your username an
 
 ```JavaScript
 var scribble = require('scribble');
-// Build your scrobbler using your API keys and user info
+// Build your scrobbler using your API keys and user info (optionally use 'true' as the last argument to enable console logging)
 var Scrobbler = new scribble('your_api_key','your_api_secret','your_lastfm_username','your_lastfm_password');
 // Make a song object in your app
 var song = {
