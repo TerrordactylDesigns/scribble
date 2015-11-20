@@ -235,7 +235,7 @@ function postLove(self, song, sk, callback) {
         api_sig: apiSig,
         artist: song.artist,
         track: song.track,
-		album: song.album
+        album: song.album
       })
   sendPost(post_data, callback)
 }
@@ -259,7 +259,7 @@ function postNowPlaying(self, song, sk, callback) {
         method: 'track.updateNowPlaying',
         artist: song.artist,
         track: song.track,
-		album: song.album,
+        album: song.album,
         duration: song.duration,
         api_key: self.apiKey,
         api_sig: apiSig,
@@ -292,7 +292,7 @@ function postScrobble(self, song, sk, callback) {
         timestamp: timestamp,
         artist: song.artist,
         track: song.track,
-		album: song.album
+        album: song.album
       })
   sendPost(post_data, callback)
 }
