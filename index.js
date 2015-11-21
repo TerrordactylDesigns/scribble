@@ -227,7 +227,7 @@ function postLove(self, song, sk, callback) {
   if (sk && self.sessionKey == null) {
     self.sessionKey = sk
   }
-  var apiSig    = makeHash('api_key' + self.apiKey + 'album' + song.album + 'artist' + song.artist + 'methodtrack.lovesk' + self.sessionKey + 'track' + song.track + self.apiSecret)
+  var apiSig    = makeHash('album' + song.album + 'api_key' + self.apiKey + 'artist' + song.artist + 'methodtrack.lovesk' + self.sessionKey + 'track' + song.track + self.apiSecret)
     , post_data = querystring.stringify({
         method: 'track.love',
         api_key: self.apiKey,
@@ -254,7 +254,7 @@ function postNowPlaying(self, song, sk, callback) {
     self.sessionKey = sk
   }
   var dur       = (song.duration) ? 'duration' + song.duration : ''
-    , apiSig    = makeHash('api_key' + self.apiKey + 'album' + song.album + 'artist' + song.artist + dur + 'methodtrack.updateNowPlayingsk' + self.sessionKey + 'track' + song.track + self.apiSecret)
+    , apiSig    = makeHash('album' + song.album + 'api_key' + self.apiKey + 'artist' + song.artist + dur + 'methodtrack.updateNowPlayingsk' + self.sessionKey + 'track' + song.track + self.apiSecret)
     , post_data = querystring.stringify({
         method: 'track.updateNowPlaying',
         artist: song.artist,
@@ -283,7 +283,7 @@ function postScrobble(self, song, sk, callback) {
   }
   var now       = new Date().getTime()
     , timestamp = Math.floor(now /1000)
-    , apiSig    = makeHash('api_key' + self.apiKey + 'album' + song.album + 'artist' + song.artist + 'methodtrack.scrobblesk' + self.sessionKey + 'timestamp' + timestamp + 'track' + song.track + self.apiSecret)
+    , apiSig    = makeHash('album' + song.album + 'api_key' + self.apiKey + 'artist' + song.artist + 'methodtrack.scrobblesk' + self.sessionKey + 'timestamp' + timestamp + 'track' + song.track + self.apiSecret)
     , post_data = querystring.stringify({
         method: 'track.scrobble',
         api_key: self.apiKey,
