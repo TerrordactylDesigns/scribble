@@ -284,7 +284,8 @@ function postScrobble(self, song, sk, callback) {
   }
   var now       = new Date().getTime()
     , timestamp = Math.floor(now /1000)
-    , apiSig    = makeHash('album' + song.album + 'api_key' + self.apiKey + 'artist' + song.artist + 'methodtrack.scrobblesk' + self.sessionKey + 'timestamp' + timestamp + 'track' + song.track + self.apiSecret)
+    , album     = (song.album) ? 'album' + song.album : ''
+    , apiSig    = makeHash(album + 'api_key' + self.apiKey + 'artist' + song.artist + 'methodtrack.scrobblesk' + self.sessionKey + 'timestamp' + timestamp + 'track' + song.track + self.apiSecret)
     , post_data = querystring.stringify({
         method: 'track.scrobble',
         api_key: self.apiKey,
