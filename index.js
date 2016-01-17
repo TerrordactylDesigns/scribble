@@ -254,7 +254,8 @@ function postNowPlaying(self, song, sk, callback) {
     self.sessionKey = sk
   }
   var dur       = (song.duration) ? 'duration' + song.duration : ''
-    , apiSig    = makeHash('album' + song.album + 'api_key' + self.apiKey + 'artist' + song.artist + dur + 'methodtrack.updateNowPlayingsk' + self.sessionKey + 'track' + song.track + self.apiSecret)
+    , album     = (song.album) ? 'album' + song.album : ''
+    , apiSig    = makeHash(album + 'api_key' + self.apiKey + 'artist' + song.artist + dur + 'methodtrack.updateNowPlayingsk' + self.sessionKey + 'track' + song.track + self.apiSecret)
     , post_data = querystring.stringify({
         method: 'track.updateNowPlaying',
         artist: song.artist,
