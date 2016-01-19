@@ -191,7 +191,7 @@ Scribble.prototype.GetSimilarSongs = function(song, callback, amt) {
 /**/// Returns
 /**/// return   - object of track info
 Scribble.prototype.GetTrackInfo = function(song, callback) {
-  var path = '/2.0/?method=track.getInfo&api_key=' + this.apiKey + '&artist=' + song.artist + '&track=' + song.track + '&format=json'
+  var path = '/2.0/?method=track.getInfo&api_key=' + this.apiKey + '&artist=' + encodeURIComponent(song.artist) + '&track=' + encodeURIComponent(song.track) + '&format=json'
   sendGet(path, function(ret) {
     if (typeof(callback) == 'function')
       callback(ret)
