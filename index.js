@@ -1,5 +1,5 @@
 /**/// GLOBALS
-var http        = require('http')
+var https       = require('https')
   , crypto      = require('crypto')
   , querystring = require('querystring')
 /**/// Public: Scribble
@@ -314,7 +314,7 @@ function sendPost(data, callback) {
           'Content-Length': data.length
         }
       }
-    , doPOST = http.request(options, function(request) {
+    , doPOST = https.request(options, function(request) {
         var reqReturn = ''
         request.setEncoding('utf8')
         request.on('data', function(chunk) {
@@ -343,10 +343,9 @@ function sendGet(path, callback) {
   var response  = ''
     , apiCall   = {
                     host: 'ws.audioscrobbler.com',
-                    port: 80,
                     path: path
                   }
-  http.get(apiCall, function(res) {
+  https.get(apiCall, function(res) {
     res.on('data', function(chunk) {
       try {
         response += chunk
