@@ -1,6 +1,6 @@
 {
   "name": "scribble",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "quick and sloppy Last.fm scrobbler and API library",
   "keywords": [
     "lastfm",
